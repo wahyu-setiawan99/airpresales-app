@@ -6,6 +6,8 @@ const AuthContext = createContext(null)
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(isCloud)
+  // True while the user arrived via a password-recovery link and must set a new password.
+  const [recovery, setRecovery] = useState(false)
 
   useEffect(() => {
     if (!isCloud) return
@@ -13,9 +15,10 @@ export function AuthProvider({ children }) {
       setSession(data.session)
       setLoading(false)
     })
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
       setSession(s)
       setLoading(false)
+      if (event === 'PASSWORD_RECOVERY') setRecovery(true)
     })
     return () => sub.subscription.unsubscribe()
   }, [])
@@ -24,6 +27,7 @@ export function AuthProvider({ children }) {
     isCloud,
     loading,
     session,
+    recovery,
     user: session?.user ?? null,
     async signIn(email, password) {
       return supabase.auth.signInWithPassword({ email, password })
@@ -33,6 +37,19 @@ export function AuthProvider({ children }) {
     },
     async signOut() {
       return supabase.auth.signOut()
+    },
+    // Sends a password-reset email that links back to /reset-password.
+    async sendPasswordReset(email) {
+      return supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      })
+    },
+    // Sets a new password for the currently-authenticated (or recovery) session.
+    async updatePassword(newPassword) {
+      return supabase.auth.updateUser({ password: newPassword })
+    },
+    endRecovery() {
+      setRecovery(false)
     },
   }
 

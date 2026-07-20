@@ -3,9 +3,13 @@ import { isCloud } from './lib/supabase.js'
 import { DataProvider } from './context/DataContext.jsx'
 import App from './App.jsx'
 import Login from './pages/Login.jsx'
+import ResetPassword from './pages/ResetPassword.jsx'
 
 export default function Root() {
-  const { loading, session } = useAuth()
+  const { loading, session, recovery } = useAuth()
+
+  // Arrived via a password-recovery link → force setting a new password first.
+  if (isCloud && recovery) return <ResetPassword />
 
   if (isCloud && loading) {
     return (
