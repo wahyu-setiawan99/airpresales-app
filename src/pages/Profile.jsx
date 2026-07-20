@@ -1,10 +1,12 @@
-import { Flame, Star, Award, Users, RotateCcw } from 'lucide-react'
+import { Flame, Star, Award, Users, RotateCcw, LogOut } from 'lucide-react'
 import { useData } from '../context/DataContext.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
 import { ACHIEVEMENTS } from '../lib/gamification.js'
 import { SectionTitle } from '../components/ui.jsx'
 
 export default function Profile() {
   const { state, activeConsultants, resetAll } = useData()
+  const { isCloud, user, signOut } = useAuth()
   const { stats, achievements, interactions } = state
   const unlocked = new Set(achievements)
 
@@ -53,17 +55,41 @@ export default function Profile() {
           {interactions.length === 1 ? '' : 's'} so far. Keep the streak alive! 🔥
         </div>
 
-        <button
-          onClick={() => {
-            if (confirm('Reset all data back to the sample set? This cannot be undone.')) resetAll()
-          }}
-          className="mt-5 mb-2 flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3 text-sm font-medium text-red-500 ring-1 ring-slate-200 active:scale-[0.99]"
-        >
-          <RotateCcw size={16} /> Reset sample data
-        </button>
-        <p className="pb-4 text-center text-xs text-slate-400">
-          Data is stored on this device. Cloud sync (Supabase) comes next.
-        </p>
+        {isCloud ? (
+          <>
+            <SectionTitle>Account</SectionTitle>
+            <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-200">
+              <p className="text-sm text-slate-600">
+                Signed in as <span className="font-medium text-slate-800">{user?.email}</span>
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                if (confirm('Sign out of AirPresales?')) signOut()
+              }}
+              className="mt-3 mb-2 flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3 text-sm font-medium text-red-500 ring-1 ring-slate-200 active:scale-[0.99]"
+            >
+              <LogOut size={16} /> Sign out
+            </button>
+            <p className="pb-4 text-center text-xs text-slate-400">
+              Your data syncs securely to the cloud. ☁️
+            </p>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={() => {
+                if (confirm('Reset all data back to the sample set? This cannot be undone.')) resetAll()
+              }}
+              className="mt-5 mb-2 flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3 text-sm font-medium text-red-500 ring-1 ring-slate-200 active:scale-[0.99]"
+            >
+              <RotateCcw size={16} /> Reset sample data
+            </button>
+            <p className="pb-4 text-center text-xs text-slate-400">
+              Demo mode — data is stored on this device only.
+            </p>
+          </>
+        )}
       </div>
     </div>
   )
