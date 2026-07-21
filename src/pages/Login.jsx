@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
+import { friendlyAuthError } from '../lib/authErrors.js'
 
 export default function Login() {
-  const { signIn, signUp, sendPasswordReset } = useAuth()
-  const [mode, setMode] = useState('signin') // 'signin' | 'signup' | 'forgot'
+  const { signIn, signUp, sendPasswordReset, sendMagicLink } = useAuth()
+  const [mode, setMode] = useState('signin') // 'signin' | 'signup' | 'forgot' | 'magic'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [busy, setBusy] = useState(false)
@@ -22,17 +23,27 @@ export default function Login() {
     if (mode === 'forgot') {
       const { error } = await sendPasswordReset(email.trim())
       setBusy(false)
-      if (error) return setMsg({ tone: 'error', text: error.message })
+      if (error) return setMsg({ tone: 'error', text: friendlyAuthError(error) })
       return setMsg({
         tone: 'info',
         text: 'If an account exists for that email, a reset link is on its way. Check your inbox.',
       })
     }
 
+    if (mode === 'magic') {
+      const { error } = await sendMagicLink(email.trim())
+      setBusy(false)
+      if (error) return setMsg({ tone: 'error', text: friendlyAuthError(error) })
+      return setMsg({
+        tone: 'info',
+        text: 'Login link sent! Check your email and tap it to sign in.',
+      })
+    }
+
     const fn = mode === 'signin' ? signIn : signUp
     const { data, error } = await fn(email.trim(), password)
     setBusy(false)
-    if (error) return setMsg({ tone: 'error', text: error.message })
+    if (error) return setMsg({ tone: 'error', text: friendlyAuthError(error) })
     if (mode === 'signup' && !data.session) {
       setMsg({ tone: 'info', text: 'Account created. Check your email to confirm, then sign in.' })
       setMode('signin')
@@ -40,10 +51,19 @@ export default function Login() {
     // On success with a session, AuthProvider flips the app to the main screen.
   }
 
-  const title =
-    mode === 'signin' ? 'Sign in' : mode === 'signup' ? 'Create account' : 'Reset password'
-  const cta =
-    mode === 'signin' ? 'Sign in' : mode === 'signup' ? 'Create account' : 'Send reset link'
+  const title = {
+    signin: 'Sign in',
+    signup: 'Create account',
+    forgot: 'Reset password',
+    magic: 'Email me a login link',
+  }[mode]
+  const cta = {
+    signin: 'Sign in',
+    signup: 'Create account',
+    forgot: 'Send reset link',
+    magic: 'Send login link',
+  }[mode]
+  const showPassword = mode === 'signin' || mode === 'signup'
 
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center bg-slate-100 px-6">
@@ -61,6 +81,11 @@ export default function Login() {
             Enter your email and we'll send you a link to set a new password.
           </p>
         )}
+        {mode === 'magic' && (
+          <p className="text-sm text-slate-500">
+            No password needed — we'll email you a link that signs you straight in.
+          </p>
+        )}
 
         <label className="block">
           <span className="mb-1 block text-xs font-medium text-slate-500">Email</span>
@@ -75,7 +100,7 @@ export default function Login() {
           />
         </label>
 
-        {mode !== 'forgot' && (
+        {showPassword && (
           <label className="block">
             <div className="mb-1 flex items-center justify-between">
               <span className="text-xs font-medium text-slate-500">Password</span>
@@ -122,7 +147,17 @@ export default function Login() {
           {busy ? 'Please wait…' : cta}
         </button>
 
-        {mode === 'forgot' ? (
+        {mode === 'signin' && (
+          <button
+            type="button"
+            onClick={() => switchMode('magic')}
+            className="w-full rounded-xl border border-slate-200 py-2.5 text-sm font-medium text-slate-600 active:bg-slate-50"
+          >
+            Email me a login link instead
+          </button>
+        )}
+
+        {mode === 'forgot' || mode === 'magic' ? (
           <button
             type="button"
             onClick={() => switchMode('signin')}

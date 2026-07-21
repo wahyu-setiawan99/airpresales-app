@@ -10,6 +10,7 @@ import Projects from './pages/Projects.jsx'
 import ProjectForm from './pages/ProjectForm.jsx'
 import ProjectDetail from './pages/ProjectDetail.jsx'
 import Profile from './pages/Profile.jsx'
+import Account from './pages/Account.jsx'
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/projects/:id" element={<ProjectDetail />} />
           <Route path="/projects/:id/edit" element={<ProjectForm />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/account" element={<Account />} />
         </Routes>
       </main>
       <AchievementToast />

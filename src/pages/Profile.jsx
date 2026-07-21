@@ -1,4 +1,5 @@
-import { Flame, Star, Award, Users, RotateCcw, LogOut } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Flame, Star, Award, Users, RotateCcw, ChevronRight } from 'lucide-react'
 import { useData } from '../context/DataContext.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { ACHIEVEMENTS } from '../lib/gamification.js'
@@ -7,7 +8,7 @@ import SyncBadge from '../components/SyncBadge.jsx'
 
 export default function Profile() {
   const { state, activeConsultants, resetAll } = useData()
-  const { isCloud, user, signOut } = useAuth()
+  const { isCloud, user } = useAuth()
   const { stats, achievements, interactions } = state
   const unlocked = new Set(achievements)
 
@@ -59,23 +60,20 @@ export default function Profile() {
         {isCloud ? (
           <>
             <SectionTitle>Account</SectionTitle>
-            <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-200">
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-sm text-slate-600">
-                  Signed in as <span className="font-medium text-slate-800">{user?.email}</span>
-                </p>
-                <SyncBadge />
-              </div>
-            </div>
-            <button
-              onClick={() => {
-                if (confirm('Sign out of AirPresales?')) signOut()
-              }}
-              className="mt-3 mb-2 flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3 text-sm font-medium text-red-500 ring-1 ring-slate-200 active:scale-[0.99]"
+            <Link
+              to="/account"
+              className="flex items-center justify-between gap-2 rounded-2xl bg-white p-4 ring-1 ring-slate-200 active:bg-slate-50"
             >
-              <LogOut size={16} /> Sign out
-            </button>
-            <p className="pb-4 text-center text-xs text-slate-400">
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium text-slate-800">{user?.email}</p>
+                <p className="text-xs text-slate-400">Change password · sign out</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <SyncBadge />
+                <ChevronRight size={18} className="text-slate-300" />
+              </div>
+            </Link>
+            <p className="mt-3 pb-4 text-center text-xs text-slate-400">
               Your data syncs securely to the cloud. ☁️
             </p>
           </>

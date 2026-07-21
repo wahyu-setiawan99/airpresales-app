@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(npx --yes create-vite@latest . --template react)",
+      "PowerShell(if \\($?\\) { \"SCAFFOLD_OK\" })",
+      "PowerShell(npm install -D vite-plugin-pwa sharp)",
+      "Bash(git add *)",
+      "Bash(git commit -q -m ' *)",
+      "Bash(git push *)"
+    ]
+  }
+}

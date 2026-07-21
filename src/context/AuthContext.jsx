@@ -35,6 +35,13 @@ export function AuthProvider({ children }) {
     async signUp(email, password) {
       return supabase.auth.signUp({ email, password })
     },
+    // Passwordless: emails a one-tap login link.
+    async sendMagicLink(email) {
+      return supabase.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: window.location.origin },
+      })
+    },
     async signOut() {
       return supabase.auth.signOut()
     },
