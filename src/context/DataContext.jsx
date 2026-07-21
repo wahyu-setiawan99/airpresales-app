@@ -95,6 +95,22 @@ export function DataProvider({ children }) {
       if (isCloud) cloud.insert('consultants', row)
       return row.id
     },
+    bulkAddConsultants(list) {
+      const now = formatISO(new Date())
+      const rows = list.map((data) => ({
+        id: newId(),
+        user_id: userId,
+        is_active: true,
+        cadence_days: null,
+        last_contacted_at: null,
+        created_at: now,
+        ...data,
+      }))
+      if (rows.length === 0) return []
+      setState((s) => ({ ...s, consultants: [...s.consultants, ...rows] }))
+      if (isCloud) cloud.insert('consultants', rows) // single bulk insert
+      return rows
+    },
     updateConsultant(id, data) {
       setState((s) => ({
         ...s,

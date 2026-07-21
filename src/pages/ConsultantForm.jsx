@@ -6,7 +6,7 @@ import { DISCIPLINES, TIERS, TIER_CADENCE } from '../lib/constants.js'
 
 const empty = {
   name: '', firm: '', title: '', discipline: 'mechanical', tier: 'B',
-  phone: '', whatsapp: '', email: '', birthday: '', cadence_days: '', notes: '',
+  whatsapp: '', birthday: '', cadence_days: '', notes: '',
 }
 
 export default function ConsultantForm() {
@@ -89,14 +89,8 @@ export default function ConsultantForm() {
           </Field>
         </div>
 
-        <Field label="Phone">
-          <input className={inputCls} value={form.phone} onChange={set('phone')} placeholder="+62812..." inputMode="tel" />
-        </Field>
-        <Field label="WhatsApp number (digits only, incl. country code)">
+        <Field label="WhatsApp / mobile number (digits incl. country code, e.g. 62812…)">
           <input className={inputCls} value={form.whatsapp} onChange={set('whatsapp')} placeholder="62812..." inputMode="numeric" />
-        </Field>
-        <Field label="Email">
-          <input className={inputCls} value={form.email} onChange={set('email')} placeholder="name@firm.com" inputMode="email" />
         </Field>
 
         <div className="grid grid-cols-2 gap-3">

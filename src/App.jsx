@@ -5,6 +5,7 @@ import Today from './pages/Today.jsx'
 import Consultants from './pages/Consultants.jsx'
 import ConsultantDetail from './pages/ConsultantDetail.jsx'
 import ConsultantForm from './pages/ConsultantForm.jsx'
+import ImportContacts from './pages/ImportContacts.jsx'
 import LogInteraction from './pages/LogInteraction.jsx'
 import Projects from './pages/Projects.jsx'
 import ProjectForm from './pages/ProjectForm.jsx'
@@ -20,6 +21,7 @@ export default function App() {
           <Route path="/" element={<Today />} />
           <Route path="/consultants" element={<Consultants />} />
           <Route path="/consultants/new" element={<ConsultantForm />} />
+          <Route path="/consultants/import" element={<ImportContacts />} />
           <Route path="/consultants/:id" element={<ConsultantDetail />} />
           <Route path="/consultants/:id/edit" element={<ConsultantForm />} />
           <Route path="/log" element={<LogInteraction />} />

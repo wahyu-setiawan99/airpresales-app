@@ -1,7 +1,7 @@
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { format } from 'date-fns'
 import {
-  ArrowLeft, Phone, MessageCircle, Mail, Pencil,
+  ArrowLeft, Phone, MessageCircle, Pencil,
   CalendarClock, Cake, Briefcase, Plus,
 } from 'lucide-react'
 import { useData } from '../context/DataContext.jsx'
@@ -60,10 +60,9 @@ export default function ConsultantDetail() {
         </div>
 
         {/* Quick contact actions */}
-        <div className="mt-4 grid grid-cols-4 gap-2">
-          <ContactBtn href={c.phone ? `tel:${c.phone}` : null} icon={<Phone size={18} />} label="Call" tone="bg-blue-50 text-blue-600" />
+        <div className="mt-4 grid grid-cols-3 gap-2">
           <ContactBtn href={c.whatsapp ? `https://wa.me/${c.whatsapp}` : null} icon={<MessageCircle size={18} />} label="WhatsApp" tone="bg-emerald-50 text-emerald-600" external />
-          <ContactBtn href={c.email ? `mailto:${c.email}` : null} icon={<Mail size={18} />} label="Email" tone="bg-violet-50 text-violet-600" />
+          <ContactBtn href={c.whatsapp ? `tel:+${c.whatsapp}` : null} icon={<Phone size={18} />} label="Call" tone="bg-blue-50 text-blue-600" />
           <button
             onClick={() => navigate(`/log/${id}`)}
             className="flex flex-col items-center gap-1 rounded-xl bg-slate-800 py-2.5 text-white active:scale-95"

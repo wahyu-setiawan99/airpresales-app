@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, Plus } from 'lucide-react'
+import { Search, Plus, Download } from 'lucide-react'
 import { useData } from '../context/DataContext.jsx'
 import { Avatar, StatusPill, EmptyState } from '../components/ui.jsx'
 import { contactStatus } from '../lib/cadence.js'
@@ -32,12 +32,20 @@ export default function Consultants() {
       <header className="sticky top-0 z-10 bg-slate-100/95 px-4 pb-2 pt-6 backdrop-blur">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-slate-800">Consultants</h1>
-          <Link
-            to="/consultants/new"
-            className="flex items-center gap-1 rounded-full bg-blue-600 px-3 py-1.5 text-sm font-medium text-white active:scale-95"
-          >
-            <Plus size={16} /> Add
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/consultants/import"
+              className="flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-sm font-medium text-slate-600 ring-1 ring-slate-200 active:scale-95"
+            >
+              <Download size={16} /> Import
+            </Link>
+            <Link
+              to="/consultants/new"
+              className="flex items-center gap-1 rounded-full bg-blue-600 px-3 py-1.5 text-sm font-medium text-white active:scale-95"
+            >
+              <Plus size={16} /> Add
+            </Link>
+          </div>
         </div>
 
         <div className="mt-3 flex items-center gap-2 rounded-xl bg-white px-3 py-2 ring-1 ring-slate-200">
