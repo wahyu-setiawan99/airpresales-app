@@ -6,6 +6,8 @@ import { applyStreak, checkAchievements } from '../lib/gamification.js'
 import { contactStatus } from '../lib/cadence.js'
 import { isCloud } from '../lib/supabase.js'
 import * as cloud from '../lib/cloud.js'
+import * as sync from '../lib/sync.js'
+import { loadCache, saveCache } from '../lib/cache.js'
 import { useAuth } from './AuthContext.jsx'
 
 const DataContext = createContext(null)
@@ -28,7 +30,7 @@ export function DataProvider({ children }) {
   const [ready, setReady] = useState(!isCloud)
   const [lastUnlocked, setLastUnlocked] = useState([])
 
-  // Cloud: load everything for the signed-in user.
+  // Cloud: show cached data instantly, then refresh from Supabase.
   useEffect(() => {
     if (!isCloud) return
     if (!userId) {
@@ -37,22 +39,45 @@ export function DataProvider({ children }) {
       return
     }
     let active = true
-    setReady(false)
-    cloud.loadAll(userId).then((data) => {
-      if (active) {
-        setState(data)
+
+    // 1) Instant paint from the local snapshot (also enables offline open).
+    const cached = loadCache(userId)
+    if (cached) {
+      setState(cached)
+      setReady(true)
+    } else {
+      setReady(false)
+    }
+
+    // 2) Refresh from the server — but don't clobber unsynced local edits.
+    cloud
+      .loadAll(userId)
+      .then((fresh) => {
+        if (!active) return
+        if (sync.getStatus().pending === 0) setState(fresh)
         setReady(true)
-      }
-    })
+      })
+      .catch((e) => {
+        console.warn('[data] cloud load failed (offline?):', e?.message)
+        if (active) setReady(true) // fall back to cache/empty; never get stuck
+      })
+
+    // 3) Flush any writes queued from a previous (possibly offline) session.
+    sync.process()
+
     return () => {
       active = false
     }
   }, [userId])
 
-  // Demo: persist to localStorage on every change.
+  // Persist locally: demo → localStorage; cloud → per-user offline snapshot.
   useEffect(() => {
-    if (!isCloud) saveState(state)
-  }, [state])
+    if (!isCloud) {
+      saveState(state)
+    } else if (userId && ready) {
+      saveCache(userId, state)
+    }
+  }, [state, userId, ready])
 
   // ---- Actions (optimistic local update + background cloud write) ----
   const actions = {

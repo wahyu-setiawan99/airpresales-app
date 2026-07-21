@@ -4,6 +4,7 @@ import { Flame, Star, AlertCircle, MessageCircle, ChevronRight } from 'lucide-re
 import { useData } from '../context/DataContext.jsx'
 import { todayList, contactStatus, daysSince, cadenceDays } from '../lib/cadence.js'
 import { Avatar, StatusPill, EmptyState, SectionTitle } from '../components/ui.jsx'
+import SyncBadge from '../components/SyncBadge.jsx'
 import { labelOf, DISCIPLINES } from '../lib/constants.js'
 
 function greeting() {
@@ -37,7 +38,10 @@ export default function Today() {
   return (
     <div>
       <header className="rounded-b-3xl bg-gradient-to-br from-blue-700 to-blue-500 px-5 pb-6 pt-8 text-white">
-        <p className="text-sm text-blue-100">{format(new Date(), 'EEEE, d MMMM')}</p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-blue-100">{format(new Date(), 'EEEE, d MMMM')}</p>
+          <SyncBadge light />
+        </div>
         <h1 className="mt-0.5 text-2xl font-bold">{greeting()} 👋</h1>
 
         <div className="mt-5 grid grid-cols-3 gap-3">

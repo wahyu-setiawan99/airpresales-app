@@ -3,6 +3,7 @@ import { useData } from '../context/DataContext.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { ACHIEVEMENTS } from '../lib/gamification.js'
 import { SectionTitle } from '../components/ui.jsx'
+import SyncBadge from '../components/SyncBadge.jsx'
 
 export default function Profile() {
   const { state, activeConsultants, resetAll } = useData()
@@ -59,9 +60,12 @@ export default function Profile() {
           <>
             <SectionTitle>Account</SectionTitle>
             <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-200">
-              <p className="text-sm text-slate-600">
-                Signed in as <span className="font-medium text-slate-800">{user?.email}</span>
-              </p>
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm text-slate-600">
+                  Signed in as <span className="font-medium text-slate-800">{user?.email}</span>
+                </p>
+                <SyncBadge />
+              </div>
             </div>
             <button
               onClick={() => {

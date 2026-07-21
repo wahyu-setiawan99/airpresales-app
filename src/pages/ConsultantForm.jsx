@@ -30,6 +30,7 @@ export default function ConsultantForm() {
       ...form,
       name: form.name.trim(),
       cadence_days: form.cadence_days ? Number(form.cadence_days) : null,
+      birthday: form.birthday || null, // Postgres `date` rejects empty strings
     }
     if (existing) {
       updateConsultant(id, payload)
